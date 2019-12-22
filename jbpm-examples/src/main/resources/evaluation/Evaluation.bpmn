@@ -1,272 +1,98 @@
-<?xml version="1.0" encoding="UTF-8"?> 
-<definitions id="Definition"
-             typeLanguage="http://www.java.com/javaTypes"
-             expressionLanguage="http://www.mvel.org/2.0"
-             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
-             xmlns:g="http://www.jboss.org/drools/flow/gpd"
-             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
-             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
-             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
-             xmlns:tns="http://www.jboss.org/drools"
-             targetNamespace="">
-
-  <itemDefinition id="_employeeItem" structureRef="String" />
-  <itemDefinition id="_reasonItem" structureRef="String" />
-  <itemDefinition id="_performanceItem" structureRef="String" />
-  <itemDefinition id="_contentItem" structureRef="String" />
-
-  <process processType="Private" isExecutable="true" id="com.sample.evaluation" name="Evaluation" tns:packageName="defaultPackage" >
-
-    <!-- process variables -->
-    <property id="employee" itemSubjectRef="_employeeItem"/>
-    <property id="reason" itemSubjectRef="_reasonItem"/>
-    <property id="performance" itemSubjectRef="_performanceItem"/>
-    <property id="content" itemSubjectRef="_contentItem"/>
-
-    <!-- nodes -->
-    <startEvent id="_1" name="Start" />
-    <userTask id="_2" name="Self Evaluation" >
-      <extensionElements>
-        <tns:onEntry-script scriptFormat="http://www.java.com/java">
-          <tns:script>java.util.Map contentParam = new java.util.HashMap();
-contentParam.put("reason", reason);
-kcontext.setVariable("content", contentParam);</tns:script>
-        </tns:onEntry-script>
-      </extensionElements>
-      <ioSpecification>
-        <dataInput id="_2_ContentInput" name="Content" />
-        <dataInput id="_2_CommentInput" name="Comment" />
-        <dataInput id="_2_SkippableInput" name="Skippable" />
-        <dataInput id="_2_TaskNameInput" name="TaskName" />
-        <dataOutput id="_2_performanceOutput" name="performance" />
-        <inputSet>
-          <dataInputRefs>_2_ContentInput</dataInputRefs>
-          <dataInputRefs>_2_CommentInput</dataInputRefs>
-          <dataInputRefs>_2_SkippableInput</dataInputRefs>
-          <dataInputRefs>_2_TaskNameInput</dataInputRefs>
-        </inputSet>
-        <outputSet>
-          <dataOutputRefs>_2_performanceOutput</dataOutputRefs>
-        </outputSet>
-      </ioSpecification>
-      <dataInputAssociation>
-        <sourceRef>content</sourceRef>
-        <targetRef>_2_ContentInput</targetRef>
-      </dataInputAssociation>
-      <dataInputAssociation>
-        <targetRef>_2_CommentInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">Please perform a self-evalutation.</from>
-          <to xsi:type="tFormalExpression">_2_CommentInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <dataInputAssociation>
-        <targetRef>_2_SkippableInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">false</from>
-          <to xsi:type="tFormalExpression">_2_SkippableInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <dataInputAssociation>
-        <targetRef>_2_TaskNameInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">Performance Evaluation</from>
-          <to xsi:type="tFormalExpression">_2_TaskNameInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <dataOutputAssociation>
-        <sourceRef>_2_performanceOutput</sourceRef>
-        <targetRef>performance</targetRef>
-      </dataOutputAssociation>
-      <potentialOwner>
-        <resourceAssignmentExpression>
-          <formalExpression>#{employee}</formalExpression>
-        </resourceAssignmentExpression>
-      </potentialOwner>
-    </userTask>
-    <userTask id="_3" name="PM Evaluation" >
-      <extensionElements>
-        <tns:onEntry-script>
-          <tns:script>java.util.Map contentParam = new java.util.HashMap();
-contentParam.put("reason", reason);
-contentParam.put("performance", performance);
-kcontext.setVariable("content", contentParam);</tns:script>
-        </tns:onEntry-script>
-      </extensionElements>
-      <ioSpecification>
-        <dataInput id="_3_ContentInput" name="Content" />
-        <dataInput id="_3_CommentInput" name="Comment" />
-        <dataInput id="_3_SkippableInput" name="Skippable" />
-        <dataInput id="_3_TaskNameInput" name="TaskName" />
-        <inputSet>
-          <dataInputRefs>_3_ContentInput</dataInputRefs>
-          <dataInputRefs>_3_CommentInput</dataInputRefs>
-          <dataInputRefs>_3_SkippableInput</dataInputRefs>
-          <dataInputRefs>_3_TaskNameInput</dataInputRefs>
-        </inputSet>
-        <outputSet>
-        </outputSet>
-      </ioSpecification>
-      <dataInputAssociation>
-        <sourceRef>content</sourceRef>
-        <targetRef>_3_ContentInput</targetRef>
-      </dataInputAssociation>
-      <dataInputAssociation>
-        <targetRef>_3_CommentInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">You need to evaluate #{employee}.</from>
-          <to xsi:type="tFormalExpression">_3_CommentInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <dataInputAssociation>
-        <targetRef>_3_SkippableInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">false</from>
-          <to xsi:type="tFormalExpression">_3_SkippableInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <dataInputAssociation>
-        <targetRef>_3_TaskNameInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">Performance Evaluation</from>
-          <to xsi:type="tFormalExpression">_3_TaskNameInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <potentialOwner>
-        <resourceAssignmentExpression>
-          <formalExpression>john</formalExpression>
-        </resourceAssignmentExpression>
-      </potentialOwner>
-    </userTask>
-    <userTask id="_4" name="HR Evaluation" >
-      <extensionElements>
-        <tns:onEntry-script scriptFormat="http://www.java.com/java">
-          <tns:script>java.util.Map contentParam = new java.util.HashMap();
-contentParam.put("reason", reason);
-contentParam.put("performance", performance);
-kcontext.setVariable("content", contentParam);</tns:script>
-        </tns:onEntry-script>
-      </extensionElements>
-      <ioSpecification>
-        <dataInput id="_4_ContentInput" name="Content" />
-        <dataInput id="_4_CommentInput" name="Comment" />
-        <dataInput id="_4_SkippableInput" name="Skippable" />
-        <dataInput id="_4_TaskNameInput" name="TaskName" />
-        <inputSet>
-          <dataInputRefs>_4_ContentInput</dataInputRefs>
-          <dataInputRefs>_4_CommentInput</dataInputRefs>
-          <dataInputRefs>_4_SkippableInput</dataInputRefs>
-          <dataInputRefs>_4_TaskNameInput</dataInputRefs>
-        </inputSet>
-        <outputSet>
-        </outputSet>
-      </ioSpecification>
-      <dataInputAssociation>
-        <sourceRef>content</sourceRef>
-        <targetRef>_4_ContentInput</targetRef>
-      </dataInputAssociation>
-      <dataInputAssociation>
-        <targetRef>_4_CommentInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">You need to evaluate #{employee}.</from>
-          <to xsi:type="tFormalExpression">_4_CommentInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <dataInputAssociation>
-        <targetRef>_4_SkippableInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">false</from>
-          <to xsi:type="tFormalExpression">_4_SkippableInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <dataInputAssociation>
-        <targetRef>_4_TaskNameInput</targetRef>
-        <assignment>
-          <from xsi:type="tFormalExpression">Performance Evaluation</from>
-          <to xsi:type="tFormalExpression">_4_TaskNameInput</to>
-        </assignment>
-      </dataInputAssociation>
-      <potentialOwner>
-        <resourceAssignmentExpression>
-          <formalExpression>mary</formalExpression>
-        </resourceAssignmentExpression>
-      </potentialOwner>
-    </userTask>
-    <parallelGateway id="_5" name="Gateway" gatewayDirection="Diverging" />
-    <parallelGateway id="_6" name="Gateway" gatewayDirection="Converging" />
-    <endEvent id="_7" name="End" >
-        <terminateEventDefinition/>
-    </endEvent>
-
-    <!-- connections -->
-    <sequenceFlow id="_1-_2" sourceRef="_1" targetRef="_2" />
-    <sequenceFlow id="_5-_3" sourceRef="_5" targetRef="_3" />
-    <sequenceFlow id="_5-_4" sourceRef="_5" targetRef="_4" />
-    <sequenceFlow id="_2-_5" sourceRef="_2" targetRef="_5" />
-    <sequenceFlow id="_4-_6" sourceRef="_4" targetRef="_6" />
-    <sequenceFlow id="_3-_6" sourceRef="_3" targetRef="_6" />
-    <sequenceFlow id="_6-_7" sourceRef="_6" targetRef="_7" />
-
-  </process>
-
+<bpmn2:definitions xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:bpsim="http://www.bpsim.org/schemas/1.0" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" id="_5YlNEAazEDiCGZDa9si3dA" exporter="jBPM Process Modeler" exporterVersion="2.0" targetNamespace="http://www.omg.org/bpmn20">
+  <bpmn2:process id="_99205BA4-3C97-45E8-A333-CCFBB5C3E41C" drools:version="1.0" drools:adHoc="false" name="_99205BA4-3C97-45E8-A333-CCFBB5C3E41C" isExecutable="true" processType="Public">
+    <bpmn2:sequenceFlow id="_AED6FFC1-1EDA-4A80-B0E2-4A31F211AAC5" sourceRef="_4CB46E25-E7C3-459D-A2D2-A06C9E4FDCD3" targetRef="_76213C69-8A2F-4C18-80BE-5E38F7AE2800">
+      <bpmn2:extensionElements>
+        <drools:metaData name="isAutoConnection.source">
+          <drools:metaValue>true</drools:metaValue>
+        </drools:metaData>
+        <drools:metaData name="isAutoConnection.target">
+          <drools:metaValue>true</drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="_B235B062-C544-4FF7-A53F-78831AF78A70" sourceRef="_40155D87-AC94-436A-8A26-8E858A147259" targetRef="_4CB46E25-E7C3-459D-A2D2-A06C9E4FDCD3">
+      <bpmn2:extensionElements>
+        <drools:metaData name="isAutoConnection.source">
+          <drools:metaValue>true</drools:metaValue>
+        </drools:metaData>
+        <drools:metaData name="isAutoConnection.target">
+          <drools:metaValue>true</drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+    </bpmn2:sequenceFlow>
+    <bpmn2:endEvent id="_76213C69-8A2F-4C18-80BE-5E38F7AE2800">
+      <bpmn2:incoming>_AED6FFC1-1EDA-4A80-B0E2-4A31F211AAC5</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:scriptTask id="_4CB46E25-E7C3-459D-A2D2-A06C9E4FDCD3" name="Task" scriptFormat="http://www.java.com/java">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue>Task</drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>_B235B062-C544-4FF7-A53F-78831AF78A70</bpmn2:incoming>
+      <bpmn2:outgoing>_AED6FFC1-1EDA-4A80-B0E2-4A31F211AAC5</bpmn2:outgoing>
+    </bpmn2:scriptTask>
+    <bpmn2:startEvent id="_40155D87-AC94-436A-8A26-8E858A147259">
+      <bpmn2:outgoing>_B235B062-C544-4FF7-A53F-78831AF78A70</bpmn2:outgoing>
+    </bpmn2:startEvent>
+  </bpmn2:process>
   <bpmndi:BPMNDiagram>
-    <bpmndi:BPMNPlane bpmnElement="com.sample.evaluation" >
-      <bpmndi:BPMNShape bpmnElement="_1" >
-        <dc:Bounds x="16" y="56" width="48" height="48" />
+    <bpmndi:BPMNPlane bpmnElement="_99205BA4-3C97-45E8-A333-CCFBB5C3E41C">
+      <bpmndi:BPMNShape id="shape__40155D87-AC94-436A-8A26-8E858A147259" bpmnElement="_40155D87-AC94-436A-8A26-8E858A147259">
+        <dc:Bounds height="56" width="56" x="408" y="114"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_2" >
-        <dc:Bounds x="96" y="56" width="135" height="48" />
+      <bpmndi:BPMNShape id="shape__4CB46E25-E7C3-459D-A2D2-A06C9E4FDCD3" bpmnElement="_4CB46E25-E7C3-459D-A2D2-A06C9E4FDCD3">
+        <dc:Bounds height="102" width="154" x="544" y="91"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_3" >
-        <dc:Bounds x="344" y="96" width="136" height="48" />
+      <bpmndi:BPMNShape id="shape__76213C69-8A2F-4C18-80BE-5E38F7AE2800" bpmnElement="_76213C69-8A2F-4C18-80BE-5E38F7AE2800">
+        <dc:Bounds height="56" width="56" x="778" y="114"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_4" >
-        <dc:Bounds x="344" y="16" width="136" height="48" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_5" >
-        <dc:Bounds x="263" y="56" width="48" height="48" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_6" >
-        <dc:Bounds x="512" y="56" width="48" height="48" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_7" >
-        <dc:Bounds x="593" y="56" width="48" height="48" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge bpmnElement="_1-_2" >
-        <di:waypoint x="40" y="80" />
-        <di:waypoint x="163" y="80" />
+      <bpmndi:BPMNEdge id="edge_shape__40155D87-AC94-436A-8A26-8E858A147259_to_shape__4CB46E25-E7C3-459D-A2D2-A06C9E4FDCD3" bpmnElement="_B235B062-C544-4FF7-A53F-78831AF78A70">
+        <di:waypoint x="464" y="142"/>
+        <di:waypoint x="544" y="142"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_5-_3" >
-        <di:waypoint x="287" y="80" />
-        <di:waypoint x="287" y="120" />
-        <di:waypoint x="412" y="120" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_5-_4" >
-        <di:waypoint x="287" y="80" />
-        <di:waypoint x="287" y="40" />
-        <di:waypoint x="412" y="40" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_2-_5" >
-        <di:waypoint x="163" y="80" />
-        <di:waypoint x="287" y="80" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_4-_6" >
-        <di:waypoint x="412" y="40" />
-        <di:waypoint x="536" y="40" />
-        <di:waypoint x="536" y="80" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_3-_6" >
-        <di:waypoint x="412" y="120" />
-        <di:waypoint x="537" y="120" />
-        <di:waypoint x="536" y="80" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_6-_7" >
-        <di:waypoint x="536" y="80" />
-        <di:waypoint x="617" y="80" />
+      <bpmndi:BPMNEdge id="edge_shape__4CB46E25-E7C3-459D-A2D2-A06C9E4FDCD3_to_shape__76213C69-8A2F-4C18-80BE-5E38F7AE2800" bpmnElement="_AED6FFC1-1EDA-4A80-B0E2-4A31F211AAC5">
+        <di:waypoint x="698" y="142"/>
+        <di:waypoint x="778" y="142"/>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
-
-</definitions>
+  <bpmn2:relationship id="_5Ytv8AazEDiCGZDa9si3dA" type="BPSimData">
+    <bpmn2:extensionElements>
+      <bpsim:BPSimData>
+        <bpsim:Scenario id="default" name="Simulationscenario">
+          <bpsim:ScenarioParameters/>
+          <bpsim:ElementParameters elementRef="_40155D87-AC94-436A-8A26-8E858A147259">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0"/>
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+          </bpsim:ElementParameters>
+          <bpsim:ElementParameters elementRef="_4CB46E25-E7C3-459D-A2D2-A06C9E4FDCD3">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0"/>
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+            <bpsim:ResourceParameters>
+              <bpsim:Availability>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Availability>
+              <bpsim:Quantity>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Quantity>
+            </bpsim:ResourceParameters>
+            <bpsim:CostParameters>
+              <bpsim:UnitCost>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:UnitCost>
+            </bpsim:CostParameters>
+          </bpsim:ElementParameters>
+        </bpsim:Scenario>
+      </bpsim:BPSimData>
+    </bpmn2:extensionElements>
+    <bpmn2:source>_5YlNEAazEDiCGZDa9si3dA</bpmn2:source>
+    <bpmn2:target>_5YlNEAazEDiCGZDa9si3dA</bpmn2:target>
+  </bpmn2:relationship>
+</bpmn2:definitions>
